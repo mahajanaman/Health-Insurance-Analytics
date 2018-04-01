@@ -5,15 +5,15 @@ Author: Aman Mahajan
 ---
 
 #1.Introduction 
-#1.1 Problem Statement
+#1.1 Problem Statement:
 Our analysis is focussed on the problem which insurance providers are facing today to define their target market and plan their sale strategies which helps them increase their market share and thereby, maximize their profitability.
 
-#1.2 Model
+#1.2 Model:
 As mentioned in the previous slide, our response will be categorical i.e. ???If the respondent is having insurance???.
 
 Therefore, we have conducted our analysis using stepwise regression for ??Generalized Linear Model??(GLM) using binomial distribution and then validation the results using partial F-test and Area Under the Curve.
 
-#1.3 Load Libraries
+#1.3 Load Libraries:
 ```{r}
 library(e1071) #Package for Skewness function used for data analysis
 library(stats) #Package for finding cook's distance
@@ -28,14 +28,14 @@ library(ROCR)#Package for ROC graphs
 ```
 
 
-#2. Data Pre-Processing 
+#2. Data Pre-Processing:
 
 Cross-section data originating from the Medical Expenditure Panel Survey survey conducted in 1996.
 
-Usage
+Usage:
 data("HealthInsurance")
 
-Format
+Format:
 A data frame containing 8,802 observations on 11 variables . 
 
 Response:
@@ -63,7 +63,7 @@ education factor indicating highest degree attained: no degree, GED (high school
 school, bachelor, master, PhD, other.
 
 
-#2.1 Load the data
+#2.1 Load the data:
 ```{r Export, echo=TRUE}
 library("AER")
 
@@ -78,7 +78,7 @@ head(HealthInsurance)
 str(HealthInsurance)
 ```
 
-#2.3 Missing Values
+#2.3 Missing Values:
 
 ```{r Missing Value, echo=TRUE}
 #To replace the possible missing values with NA
@@ -141,7 +141,7 @@ It can be said that the raw data taken is a processed data and does not need any
 #3 Exploratory Data Visualisation :
 
 
-#3.1 Scatter plots for Continous Variable
+#3.1 Scatter plots for Continous Variable:
 ```{r}
 #pairs(~health,age,limit,gender,insurance,married,selfemp,family,region,tehnicity,education , data=HealthInsurance)
 #Unlike pairs(), ggpairs() works with non-numeric
@@ -166,7 +166,7 @@ Since the variable is not skewed so we need not use any tranformations like log 
 
 We can observe that the age is uniformly clustered around qauantile[-4:4]
 
-#3.2 Skewness
+#3.2 Skewness:
 We can also check the skewness using skewness() function: 
 ```{r}
 skewness(HealthInsurance$age)
@@ -183,7 +183,7 @@ plot(sqrt.y,xlab="famlily",ylab="Sqrt(family)")
 
 ```
 
-#3.3 BoxPlots and Stripcharts
+#3.3 BoxPlots and Stripcharts:
 Scatterplot matrix of all the continous variables while viewing the insurance variable as the output variable.
 
 ```{r}
@@ -204,7 +204,7 @@ stripchart(numeric_data,
 ```
 Visual Inspection between the 2 continous variables: Family vs insurance box plot tells us that there is considerable amount of potential outliers for family variable
 
-#3.4 Z-Scores Scaling
+#3.4 Z-Scores Scaling:
 
 ```{r}
 
@@ -223,7 +223,7 @@ stripchart(numeric_data, vertical = TRUE, method = "jitter", col = (c("gold","da
 
 It provides confirmation of the variable transformations as all the variables now have mean 0. Also , the number of potential outliers are distinctly visible for family after z-score tranformations. 
 
-#3.5 Correlation Matrix
+#3.5 Correlation Matrix:
 
 ```{r}
 cor(numeric_data)
@@ -231,7 +231,7 @@ cor(numeric_data)
 
 Family and age have inverse relation which should not be the case as family is directly related with age of the person.
 
-#3.6 CHI Square Test of Independence
+#3.6 CHI Square Test of Independence:
 The Chi Square test of independence is used to determine if there is a significant relationship between two categorical variables.
 
 ```{r}
@@ -291,7 +291,7 @@ print(chisq.test(a.data))
 ```
 We can infer by Chi Square test that the variable limit is relatively insignificant as compared to other variables. 
 
-#4. Predictive Modelling
+#4. Predictive Modelling:
 
 
 #4.1 Convert the data into training and Test in 80-20 ratio :
@@ -307,7 +307,7 @@ dim(testing)
 ```
 
 
-#4.2 Generalized linear Model
+#4.2 Generalized linear Model:
 We would not be implementing linear or polynomial model as the response is not a continous variable. We need the prediction in Yes or No. Hence we would implement glm model with Binomial distribution.We cannot implement Poisson Distribution as we have the factors as "Yes" and "No" which would be taken as missing values by Poisson. 
 
 ```{r}
@@ -319,7 +319,7 @@ summary(model1)
 
 We can see that this model does a good job on deciding the goodness of the training model. If the p-value is less than or equal to the alpha (i.e p < .05), the result is statistically significant. If the p-value is greater than alpha (p > .05), the result is statistically insignificant.
 
-#4.3 Hypothesis Testing for Stepwise Regression
+#4.3 Hypothesis Testing for Stepwise Regression:
 
 No matter how significant a model can be we can still make it better by using Hypothesis testing so that all the co-efficients of variable are significant.
 
@@ -355,7 +355,7 @@ summary(model4)
 
 We can see that all the variables are significant, so model 4 is the potential model to predcit the response variable. 
 
-#4.4 Partial F-test for Confidence Intervals 
+#4.4 Partial F-test for Confidence Intervals :
 
 For Alpha=.05
 We find the 95% probable interval from the 0.0 and 0.95 quantiles of the F distribution for (6388,6401) degree of freedom for model 4
@@ -402,7 +402,7 @@ It can be inferred that in 5% of probable interval all  the variable are still s
       
 
 
-#4.5 Test for Validating Models Significance
+#4.5 Test for Validating Models Significance:
 
 Anova Test
 ```{r}
@@ -419,7 +419,7 @@ Analyzing the table we can see the increase in deviance when removing each varia
 we can see that it is a significant increase in deviance and the AIC as we go from model 1 to model 4.
 
 
-McFaddedn Test
+McFaddedn Test:
 
 ```{r}
 
@@ -434,7 +434,7 @@ pR2(model4)
 
 While no exact equivalent to the R2 of linear regression exists, the McFadden R2 index can be used to assess the model fit which is most for model 4 hence validating it as the most signifiant model. 
 
-#4.6 Potential Outliers
+#4.6 Potential Outliers:
 ```{r}
 (plot1 <- qplot(insurance, model4$fitted.values, geom = "boxplot", data=training)+labs(y="Fitted Values")+ggtitle("Residuals vs Test Plot"))
 ```
@@ -499,7 +499,7 @@ The error rate for training is roughly 19% and accuracy is 81.03% which is very 
 
 After fitting the model with the testing data we can observe that the acccuracy is 80.833 % which indicates satisfactory goodness of fit of the model.  
 
-#4.9 Area Under the Curve
+#4.9 Area Under the Curve:
 
 ```{r}
 auc<- performance(pred,"auc")
@@ -510,7 +510,7 @@ auc
 
 As a rule of thumb, a model with good predictive ability should have an AUC closer to 1 (1 is ideal) than to 0.5 which is the case with model 4 having area under the curve as .7486046.
 
-#4.10 To Find the actual movement and predict whether person takes insurance or not
+#4.10 To Find the actual movement and predict whether person takes insurance or not:
 
 To predict Direction for new values of Insurance we simply use the predict() function and feed in a data frame of new values. We want to predict Direction on a day when Lag1 and Lag2 equal 1.2 and 1.1, respectively, and on a day when they equal 1.5 and -0.8.  
 ```{r}
@@ -535,6 +535,6 @@ selfemp=no
 
 Then ther are 92.38% prediction chance that she has insurance . 
 
-#5 Conclusion
+#5 Conclusion:
 
 This feature can be widely used by the insurance companies to predict whether the customer has health insurance or not. This would in turn help to infer the potential insurance buyers and help the companies to target the right audience to get maximum health insurance sales. 
